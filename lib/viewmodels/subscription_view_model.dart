@@ -33,6 +33,33 @@ class SubscriptionViewModel extends ChangeNotifier {
     }
   }
 
+  Future<void> markAsPaid(String id) async {
+    final index = _subscriptions.indexWhere((s) => s.id == id);
+    if (index != -1) {
+      final sub = _subscriptions[index];
+      DateTime nextDate = sub.nextPaymentDate;
+      if (sub.periodicity == 'Monthly') {
+        nextDate = DateTime(nextDate.year, nextDate.month + 1, nextDate.day);
+      } else if (sub.periodicity == 'Yearly') {
+        nextDate = DateTime(nextDate.year + 1, nextDate.month, nextDate.day);
+      } else if (sub.periodicity == 'Weekly') {
+        nextDate = nextDate.add(const Duration(days: 7));
+      } else if (sub.periodicity == 'Daily') {
+        nextDate = nextDate.add(const Duration(days: 1));
+      }
+      
+      final updatedSub = sub.copyWith(nextPaymentDate: nextDate);
+      _subscriptions[index] = updatedSub;
+      await _storageService.saveSubscriptions(_subscriptions);
+      
+      if (updatedSub.hasReminder) {
+        await _notificationService.cancelReminder(id);
+        await _notificationService.schedulePaymentReminder(updatedSub);
+      }
+      _notifySafely();
+    }
+  }
+
   Future<void> addSubscription(Subscription sub) async {
     _subscriptions.add(sub);
     await _storageService.saveSubscriptions(_subscriptions);

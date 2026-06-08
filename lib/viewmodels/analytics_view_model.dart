@@ -13,18 +13,18 @@ class AnalyticsViewModel extends ChangeNotifier {
     NotificationService().scheduleOptimizationTip();
   }
 
+  double _getMonthlyAmount(Subscription sub) {
+    if (sub.periodicity == 'Monthly') return sub.amount;
+    if (sub.periodicity == 'Yearly') return sub.amount / 12;
+    if (sub.periodicity == 'Weekly') return (sub.amount * 52) / 12;
+    if (sub.periodicity == 'Daily') return (sub.amount * 365) / 12;
+    return sub.amount;
+  }
+
   double getTotalMonthlyExpense() {
     double total = 0;
     for (var sub in _subscriptions) {
-      if (sub.periodicity == 'Monthly') {
-        total += sub.amount;
-      } else if (sub.periodicity == 'Yearly') {
-        total += sub.amount / 12;
-      } else if (sub.periodicity == 'Weekly') {
-        total += sub.amount * 4.33;
-      } else if (sub.periodicity == 'Daily') {
-        total += sub.amount * 30;
-      }
+      total += _getMonthlyAmount(sub);
     }
     return total;
   }
@@ -32,15 +32,7 @@ class AnalyticsViewModel extends ChangeNotifier {
   Map<String, double> getExpenseByCategory() {
     Map<String, double> categoryExpense = {};
     for (var sub in _subscriptions) {
-      double amountMonthly = sub.amount;
-      if (sub.periodicity == 'Yearly') {
-        amountMonthly = sub.amount / 12;
-      } else if (sub.periodicity == 'Weekly') {
-        amountMonthly = sub.amount * 4.33;
-      } else if (sub.periodicity == 'Daily') {
-        amountMonthly = sub.amount * 30;
-      }
-      
+      double amountMonthly = _getMonthlyAmount(sub);
       categoryExpense[sub.category] = (categoryExpense[sub.category] ?? 0) + amountMonthly;
     }
     return categoryExpense;

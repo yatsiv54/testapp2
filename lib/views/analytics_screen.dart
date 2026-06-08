@@ -1,6 +1,9 @@
+import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter_animate/flutter_animate.dart';
+import 'package:path_provider/path_provider.dart';
+import 'package:share_plus/share_plus.dart';
 import 'package:community_charts_flutter/community_charts_flutter.dart'
     as charts;
 import '../viewmodels/subscription_view_model.dart';
@@ -57,13 +60,14 @@ class _AnalyticsScreenState extends State<AnalyticsScreen> {
     return converted;
   }
 
-  void _exportReport(BuildContext context, String currencySymbol) {
+  Future<void> _exportReport(BuildContext context, String currencySymbol) async {
     showDialog(
       context: context,
+      barrierDismissible: false,
       builder: (c) => AlertDialog(
         title: Row(
           children: [
-            Icon(Icons.picture_as_pdf_rounded, color: AppTheme.primaryAccent),
+            Icon(Icons.insert_chart_outlined_rounded, color: AppTheme.primaryAccent),
             const SizedBox(width: 10),
             const Text('Exporting Report'),
           ],
@@ -71,9 +75,8 @@ class _AnalyticsScreenState extends State<AnalyticsScreen> {
         content: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            const Text('Preparing your spending analytics chart data...'),
+            const Text('Preparing your spending analytics data...'),
             const SizedBox(height: 20),
-            // Custom linear progress bar
             LinearProgressIndicator(
               color: AppTheme.primaryAccent,
               backgroundColor: AppTheme.primaryAccent.withValues(alpha: 0.1),
@@ -83,25 +86,36 @@ class _AnalyticsScreenState extends State<AnalyticsScreen> {
       ),
     );
 
-    Future.delayed(const Duration(seconds: 2), () {
+    try {
+      final subVm = Provider.of<SubscriptionViewModel>(context, listen: false);
+      final subs = subVm.subscriptions;
+      
+      // Create CSV content
+      final buffer = StringBuffer();
+      buffer.writeln('Name,Amount,Currency,Periodicity,Category,Status,Next Payment Date');
+      for (var sub in subs) {
+        final nextDateStr = '${sub.nextPaymentDate.year}-${sub.nextPaymentDate.month.toString().padLeft(2, '0')}-${sub.nextPaymentDate.day.toString().padLeft(2, '0')}';
+        buffer.writeln('"${sub.name}",${sub.amount},"$currencySymbol","${sub.periodicity}","${sub.category}","${sub.status}","$nextDateStr"');
+      }
+
+      final directory = await getApplicationDocumentsDirectory();
+      final path = '${directory.path}/subscriptions_report_${DateTime.now().millisecondsSinceEpoch}.csv';
+      final file = File(path);
+      await file.writeAsString(buffer.toString());
+
       if (!context.mounted) return;
-      Navigator.pop(context); // Close loading dialog
-      showDialog(
-        context: context,
-        builder: (c) => AlertDialog(
-          title: const Text('Export Successful'),
-          content: Text(
-            'Your subscription expenses report ($_selectedInterval view) has been generated successfully and stored locally.',
-          ),
-          actions: [
-            TextButton(
-              onPressed: () => Navigator.pop(c),
-              child: const Text('OK'),
-            ),
-          ],
-        ),
+      Navigator.pop(context); // Close dialog
+
+      // ignore: deprecated_member_use
+      await Share.shareXFiles(
+        [XFile(path)],
+        text: 'My Subscription Report ($_selectedInterval view)',
       );
-    });
+    } catch (e) {
+      if (!context.mounted) return;
+      Navigator.pop(context);
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Error exporting report: $e')));
+    }
   }
 
   String _getCurrencySymbol(String code) {

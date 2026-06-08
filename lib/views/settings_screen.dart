@@ -4,6 +4,7 @@ import 'package:flutter_animate/flutter_animate.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:permission_handler/permission_handler.dart';
+import 'package:package_info_plus/package_info_plus.dart';
 import '../viewmodels/settings_view_model.dart';
 import '../viewmodels/subscription_view_model.dart';
 import '../viewmodels/profile_view_model.dart';
@@ -207,20 +208,26 @@ class SettingsScreen extends StatelessWidget {
                         onTap: () => _showPrivacyPolicy(context),
                       ),
                       const Divider(height: 1),
-                      ListTile(
-                        title: const Text('App Version', style: TextStyle(fontWeight: FontWeight.w600)),
-                        subtitle: const Text('Check currently installed version'),
-                        leading: const Icon(Icons.info_outline_rounded, color: Colors.purple),
-                        trailing: const Text(
-                          'v1.0.0', 
-                          style: TextStyle(fontWeight: FontWeight.bold, color: Colors.grey),
-                        ),
-                        onTap: () {
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            const SnackBar(
-                              content: Text('Life Subscription Constructor is up to date.'),
-                              behavior: SnackBarBehavior.floating,
+                      FutureBuilder<PackageInfo>(
+                        future: PackageInfo.fromPlatform(),
+                        builder: (context, snapshot) {
+                          final version = snapshot.hasData ? 'v${snapshot.data!.version}' : 'v...';
+                          return ListTile(
+                            title: const Text('App Version', style: TextStyle(fontWeight: FontWeight.w600)),
+                            subtitle: const Text('Check currently installed version'),
+                            leading: const Icon(Icons.info_outline_rounded, color: Colors.purple),
+                            trailing: Text(
+                              version, 
+                              style: const TextStyle(fontWeight: FontWeight.bold, color: Colors.grey),
                             ),
+                            onTap: () {
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                SnackBar(
+                                  content: Text('You are on the latest version ($version).'),
+                                  behavior: SnackBarBehavior.floating,
+                                ),
+                              );
+                            },
                           );
                         },
                       ),

@@ -295,6 +295,52 @@ class SubscriptionDetailScreen extends StatelessWidget {
                         ],
                       ),
                       const Divider(height: 24),
+                      // Mark as Paid Row
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Row(
+                            children: [
+                              Container(
+                                padding: const EdgeInsets.all(8),
+                                decoration: BoxDecoration(
+                                  color: AppTheme.success.withValues(alpha: 0.1),
+                                  borderRadius: BorderRadius.circular(10),
+                                ),
+                                child: const Icon(
+                                  Icons.check_circle_outline_rounded, 
+                                  color: AppTheme.success, 
+                                  size: 20,
+                                ),
+                              ),
+                              const SizedBox(width: 12),
+                              const Text(
+                                'Mark as Paid', 
+                                style: TextStyle(fontWeight: FontWeight.w600, fontSize: 15),
+                              ),
+                            ],
+                          ),
+                          TextButton(
+                            style: TextButton.styleFrom(
+                              foregroundColor: AppTheme.success,
+                              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                            ),
+                            onPressed: () {
+                              vm.markAsPaid(sub.id);
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                SnackBar(
+                                  content: const Text('Payment recorded. Next date updated.'),
+                                  duration: const Duration(seconds: 2),
+                                  behavior: SnackBarBehavior.floating,
+                                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                                ),
+                              );
+                            },
+                            child: const Text('PAID', style: TextStyle(fontWeight: FontWeight.bold)),
+                          ),
+                        ],
+                      ),
+                      const Divider(height: 24),
                       // Reminder Toggle Row
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
