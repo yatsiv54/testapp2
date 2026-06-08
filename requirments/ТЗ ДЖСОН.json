@@ -1,0 +1,598 @@
+{
+  "project": {
+    "name": "Life Subscription Constructor",
+    "platform": [
+      "iOS",
+      "Android"
+    ],
+    "language": "Dart",
+    "minimumOSVersion": "N/A",
+    "architecture": "MVVM",
+    "dependencies": [
+      "provider",
+      "camera",
+      "shared_preferences",
+      "in_app_review",
+      "charts_flutter",
+      "flutter_local_notifications"
+    ],
+    "version": "1.0"
+  },
+  "designSystem": {
+    "theme": "Light",
+    "colors": {
+      "background": "#F9FAFB",
+      "primaryAccent": "#3BBF5C",
+      "secondaryAccent": "#2B7BFF",
+      "card": "#FFFFFF",
+      "textPrimary": "#1A1A1A",
+      "textSecondary": "#4D5B6B",
+      "border": "#E6E8EC",
+      "error": "#E53E3E",
+      "success": "#23C16B",
+      "warning": "#F5A623"
+    },
+    "typography": {
+      "fontFamily": "Inter",
+      "h1": 24,
+      "h2": 20,
+      "h3": 18,
+      "body": 16,
+      "caption": 14
+    },
+    "spacing": {
+      "xs": 4,
+      "sm": 8,
+      "md": 16,
+      "lg": 24,
+      "xl": 32
+    },
+    "radius": {
+      "card": 16,
+      "button": 12,
+      "input": 10
+    },
+    "elevation": {
+      "card": 2,
+      "modal": 8,
+      "button": 1
+    }
+  },
+  "app": {
+    "entryPoint": "main.dart",
+    "lifecycle": "AppLifecycleObserver",
+    "preloader": {
+      "screenName": "PreloaderScreen",
+      "animationType": "ShimmerLoading",
+      "initializationLogic": "Initialize local storage, check camera permissions, load theme, verify dependencies",
+      "dependencyChecks": [
+        "camera",
+        "storage",
+        "theme"
+      ],
+      "themeLoading": "Apply light theme with accent colors",
+      "transitionLogic": "Navigate to OnboardingScreen after initialization"
+    },
+    "navigation": {
+      "type": "HybridTabStackNavigation",
+      "structure": [
+        {
+          "tab": "Home",
+          "stack": [
+            "HomeScreen",
+            "SubscriptionDetailScreen",
+            "CreateEditSubscriptionScreen"
+          ]
+        },
+        {
+          "tab": "Analytics",
+          "stack": [
+            "AnalyticsScreen"
+          ]
+        },
+        {
+          "tab": "Subscriptions",
+          "stack": [
+            "SubscriptionListScreen",
+            "SubscriptionDetailScreen"
+          ]
+        },
+        {
+          "tab": "Profile",
+          "stack": [
+            "UserProfileScreen",
+            "EditProfileScreen"
+          ]
+        },
+        {
+          "tab": "Settings",
+          "stack": [
+            "SettingsScreen"
+          ]
+        }
+      ]
+    },
+    "features": [
+      {
+        "screenName": "OnboardingScreen",
+        "view": "OnboardingView",
+        "viewModel": "OnboardingViewModel",
+        "screenType": "onboarding",
+        "primaryPurpose": "Introduce app concept and features",
+        "userActions": [
+          "Next",
+          "Skip"
+        ],
+        "inputFields": [],
+        "validationReference": [],
+        "dataReadFrom": [],
+        "dataWriteTo": [],
+        "cachingPolicy": "none",
+        "offlineBehavior": "full",
+        "connectedServices": [],
+        "navigationLinks": [
+          "HomeScreen"
+        ],
+        "loadingState": "Show onboarding animation",
+        "emptyState": "Show welcome message",
+        "errorState": "Show retry option",
+        "retryBehavior": "Reload onboarding content"
+      },
+      {
+        "screenName": "HomeScreen",
+        "view": "HomeView",
+        "viewModel": "HomeViewModel",
+        "screenType": "home",
+        "primaryPurpose": "Display main subscriptions and analytics",
+        "userActions": [
+          "View Details",
+          "Create Subscription",
+          "Open Analytics"
+        ],
+        "inputFields": [],
+        "validationReference": [],
+        "dataReadFrom": [
+          "subscriptions",
+          "analytics"
+        ],
+        "dataWriteTo": [],
+        "cachingPolicy": "session",
+        "offlineBehavior": "read-only",
+        "connectedServices": [
+          "analyticsService"
+        ],
+        "navigationLinks": [
+          "SubscriptionDetailScreen",
+          "CreateEditSubscriptionScreen",
+          "AnalyticsScreen"
+        ],
+        "loadingState": "Show shimmer cards",
+        "emptyState": "Show no subscriptions message",
+        "errorState": "Show error banner",
+        "retryBehavior": "Retry data fetch"
+      },
+      {
+        "screenName": "SubscriptionListScreen",
+        "view": "SubscriptionListView",
+        "viewModel": "SubscriptionListViewModel",
+        "screenType": "list",
+        "primaryPurpose": "Overview all subscriptions",
+        "userActions": [
+          "Filter",
+          "Sort",
+          "Open Detail"
+        ],
+        "inputFields": [],
+        "validationReference": [],
+        "dataReadFrom": [
+          "subscriptions"
+        ],
+        "dataWriteTo": [],
+        "cachingPolicy": "persistent",
+        "offlineBehavior": "full",
+        "connectedServices": [],
+        "navigationLinks": [
+          "SubscriptionDetailScreen"
+        ],
+        "loadingState": "Show loading list",
+        "emptyState": "Show empty list message",
+        "errorState": "Show retry button",
+        "retryBehavior": "Reload list"
+      },
+      {
+        "screenName": "SubscriptionDetailScreen",
+        "view": "SubscriptionDetailView",
+        "viewModel": "SubscriptionDetailViewModel",
+        "screenType": "detail",
+        "primaryPurpose": "Show full info and payment history",
+        "userActions": [
+          "Edit",
+          "Delete",
+          "Set Reminder"
+        ],
+        "inputFields": [],
+        "validationReference": [],
+        "dataReadFrom": [
+          "subscriptions",
+          "reminders"
+        ],
+        "dataWriteTo": [],
+        "cachingPolicy": "session",
+        "offlineBehavior": "read-only",
+        "connectedServices": [
+          "notificationService"
+        ],
+        "navigationLinks": [
+          "CreateEditSubscriptionScreen"
+        ],
+        "loadingState": "Show detail shimmer",
+        "emptyState": "Show no data message",
+        "errorState": "Show error dialog",
+        "retryBehavior": "Retry fetch"
+      },
+      {
+        "screenName": "CreateEditSubscriptionScreen",
+        "view": "CreateEditSubscriptionView",
+        "viewModel": "CreateEditSubscriptionViewModel",
+        "screenType": "input",
+        "primaryPurpose": "Create or edit a subscription",
+        "userActions": [
+          "Save",
+          "Attach Photo",
+          "Cancel"
+        ],
+        "inputFields": [
+          {
+            "fieldName": "subscriptionName",
+            "fieldType": "text",
+            "required": true,
+            "validationGroup": "textFieldRules",
+            "defaultValue": "",
+            "storageLocation": "local"
+          },
+          {
+            "fieldName": "amount",
+            "fieldType": "number",
+            "required": true,
+            "validationGroup": "numericFieldRules",
+            "defaultValue": "",
+            "storageLocation": "local"
+          },
+          {
+            "fieldName": "periodicity",
+            "fieldType": "selection",
+            "required": true,
+            "validationGroup": "selectionRules",
+            "defaultValue": "Monthly",
+            "storageLocation": "local"
+          },
+          {
+            "fieldName": "nextPaymentDate",
+            "fieldType": "date",
+            "required": true,
+            "validationGroup": "dateFieldRules",
+            "defaultValue": "",
+            "storageLocation": "local"
+          },
+          {
+            "fieldName": "category",
+            "fieldType": "selection",
+            "required": true,
+            "validationGroup": "selectionRules",
+            "defaultValue": "General",
+            "storageLocation": "local"
+          },
+          {
+            "fieldName": "logoPhoto",
+            "fieldType": "image",
+            "required": false,
+            "validationGroup": "imageRules",
+            "defaultValue": "",
+            "storageLocation": "local"
+          }
+        ],
+        "validationReference": [
+          "textFieldRules",
+          "numericFieldRules",
+          "dateFieldRules",
+          "imageRules",
+          "selectionRules"
+        ],
+        "dataReadFrom": [],
+        "dataWriteTo": [
+          "subscriptions"
+        ],
+        "cachingPolicy": "persistent",
+        "offlineBehavior": "full",
+        "connectedServices": [
+          "cameraService"
+        ],
+        "navigationLinks": [
+          "SubscriptionListScreen",
+          "HomeScreen"
+        ],
+        "loadingState": "Show input shimmer",
+        "emptyState": "Show empty form",
+        "errorState": "Show form error",
+        "retryBehavior": "Retry save"
+      },
+      {
+        "screenName": "AnalyticsScreen",
+        "view": "AnalyticsView",
+        "viewModel": "AnalyticsViewModel",
+        "screenType": "analytics",
+        "primaryPurpose": "Visualize and compare subscription spending",
+        "userActions": [
+          "Change Interval",
+          "Export Report",
+          "Toggle Chart Type"
+        ],
+        "inputFields": [],
+        "validationReference": [],
+        "dataReadFrom": [
+          "subscriptions",
+          "analytics"
+        ],
+        "dataWriteTo": [],
+        "cachingPolicy": "persistent",
+        "offlineBehavior": "read-only",
+        "connectedServices": [
+          "analyticsService"
+        ],
+        "navigationLinks": [
+          "HomeScreen"
+        ],
+        "loadingState": "Show chart shimmer",
+        "emptyState": "Show no data chart",
+        "errorState": "Show analytics error",
+        "retryBehavior": "Reload analytics"
+      },
+      {
+        "screenName": "UserProfileScreen",
+        "view": "UserProfileView",
+        "viewModel": "UserProfileViewModel",
+        "screenType": "profile",
+        "primaryPurpose": "Manage user info and avatar",
+        "userActions": [
+          "Edit Name",
+          "Capture Photo",
+          "Skip"
+        ],
+        "inputFields": [
+          {
+            "fieldName": "userName",
+            "fieldType": "text",
+            "required": false,
+            "validationGroup": "textFieldRules",
+            "defaultValue": "",
+            "storageLocation": "local"
+          },
+          {
+            "fieldName": "avatarPhoto",
+            "fieldType": "image",
+            "required": false,
+            "validationGroup": "imageRules",
+            "defaultValue": "",
+            "storageLocation": "local"
+          }
+        ],
+        "validationReference": [
+          "textFieldRules",
+          "imageRules"
+        ],
+        "dataReadFrom": [
+          "userProfile"
+        ],
+        "dataWriteTo": [
+          "userProfile"
+        ],
+        "cachingPolicy": "persistent",
+        "offlineBehavior": "full",
+        "connectedServices": [
+          "cameraService"
+        ],
+        "navigationLinks": [
+          "EditProfileScreen",
+          "HomeScreen"
+        ],
+        "loadingState": "Show profile shimmer",
+        "emptyState": "Show no profile message",
+        "errorState": "Show profile error",
+        "retryBehavior": "Retry load profile"
+      },
+      {
+        "screenName": "EditProfileScreen",
+        "view": "EditProfileView",
+        "viewModel": "EditProfileViewModel",
+        "screenType": "input",
+        "primaryPurpose": "Edit profile info and photo",
+        "userActions": [
+          "Save",
+          "Capture Photo",
+          "Cancel"
+        ],
+        "inputFields": [
+          {
+            "fieldName": "userName",
+            "fieldType": "text",
+            "required": false,
+            "validationGroup": "textFieldRules",
+            "defaultValue": "",
+            "storageLocation": "local"
+          },
+          {
+            "fieldName": "avatarPhoto",
+            "fieldType": "image",
+            "required": false,
+            "validationGroup": "imageRules",
+            "defaultValue": "",
+            "storageLocation": "local"
+          }
+        ],
+        "validationReference": [
+          "textFieldRules",
+          "imageRules"
+        ],
+        "dataReadFrom": [
+          "userProfile"
+        ],
+        "dataWriteTo": [
+          "userProfile"
+        ],
+        "cachingPolicy": "persistent",
+        "offlineBehavior": "full",
+        "connectedServices": [
+          "cameraService"
+        ],
+        "navigationLinks": [
+          "UserProfileScreen"
+        ],
+        "loadingState": "Show edit shimmer",
+        "emptyState": "Show empty edit form",
+        "errorState": "Show edit error",
+        "retryBehavior": "Retry save"
+      },
+      {
+        "screenName": "SettingsScreen",
+        "view": "SettingsView",
+        "viewModel": "SettingsViewModel",
+        "screenType": "settings",
+        "primaryPurpose": "Configure app preferences and system settings",
+        "userActions": [
+          "Toggle Notifications",
+          "Change Theme",
+          "Select Currency",
+          "Manage Analytics",
+          "Purge Database",
+          "Rate App",
+          "Share App",
+          "View Privacy Policy",
+          "Reset Local Storage",
+          "Check App Version"
+        ],
+        "inputFields": [],
+        "validationReference": [],
+        "dataReadFrom": [
+          "settings"
+        ],
+        "dataWriteTo": [
+          "settings"
+        ],
+        "cachingPolicy": "persistent",
+        "offlineBehavior": "full",
+        "connectedServices": [],
+        "navigationLinks": [
+          "HomeScreen"
+        ],
+        "loadingState": "Show settings shimmer",
+        "emptyState": "Show default settings",
+        "errorState": "Show settings error",
+        "retryBehavior": "Retry load settings"
+      }
+    ],
+    "services": [
+      {
+        "serviceName": "cameraService",
+        "serviceType": "device",
+        "description": "Handles photo capture and image processing for subscriptions and profile"
+      },
+      {
+        "serviceName": "analyticsService",
+        "serviceType": "local",
+        "description": "Aggregates and visualizes subscription spending data"
+      },
+      {
+        "serviceName": "notificationService",
+        "serviceType": "local",
+        "description": "Schedules and manages local notifications for payment reminders"
+      }
+    ],
+    "validation": {
+      "globalRules": {
+        "constraints": "All forms must be validated before submission; no empty required fields allowed",
+        "errorMessage": "Please fill all required fields",
+        "systemBehavior": "Block submission and highlight errors"
+      },
+      "textFieldRules": {
+        "constraints": "Min 2, max 64 chars; no special symbols except dash and space",
+        "errorMessage": "Invalid text input",
+        "systemBehavior": "Show inline error, block save"
+      },
+      "numericFieldRules": {
+        "constraints": "Positive numbers only, max 6 digits",
+        "errorMessage": "Amount must be a positive number",
+        "systemBehavior": "Show inline error, block save"
+      },
+      "dateFieldRules": {
+        "constraints": "Date must be today or in the future",
+        "errorMessage": "Date cannot be in the past",
+        "systemBehavior": "Show error, block save"
+      },
+      "imageRules": {
+        "constraints": "JPEG/PNG only, max 5MB",
+        "errorMessage": "Invalid image format or size",
+        "systemBehavior": "Show image error, block upload"
+      },
+      "selectionRules": {
+        "constraints": "Must select from predefined options",
+        "errorMessage": "Please select a valid option",
+        "systemBehavior": "Show selection error, block save"
+      },
+      "errorHandlingStrategy": {
+        "constraints": "All errors must be caught and displayed to user",
+        "errorMessage": "Unexpected error occurred",
+        "systemBehavior": "Show error dialog, allow retry"
+      },
+      "formSubmissionPolicy": {
+        "constraints": "Submit only if all validations pass",
+        "errorMessage": "Form contains errors",
+        "systemBehavior": "Block submission, scroll to first error"
+      }
+    },
+    "components": [
+      "SubscriptionCard",
+      "PhotoPicker",
+      "AnalyticsChart",
+      "ProfileAvatar",
+      "SettingsTile",
+      "NotificationBanner"
+    ],
+    "ratingFlow": {
+      "type": "native",
+      "implementation": "in_app_review",
+      "threshold": null,
+      "feedbackForm": false,
+      "validationRules": [],
+      "redirectCondition": null
+    },
+    "notificationFlows": [
+      {
+        "notificationType": "paymentReminder",
+        "title": "Upcoming Subscription Payment",
+        "body": "Your payment for {subscriptionName} is due soon.",
+        "triggerCondition": "1 day before nextPaymentDate",
+        "frequency": "once",
+        "deepLinkDestination": "SubscriptionDetailScreen",
+        "relatedFeature": "reminders"
+      },
+      {
+        "notificationType": "statusChange",
+        "title": "Subscription Status Updated",
+        "body": "Status for {subscriptionName} has changed.",
+        "triggerCondition": "on status change",
+        "frequency": "as_needed",
+        "deepLinkDestination": "SubscriptionDetailScreen",
+        "relatedFeature": "subscriptions"
+      },
+      {
+        "notificationType": "optimizationTip",
+        "title": "Optimize Your Subscriptions",
+        "body": "Check analytics for ways to save on subscriptions.",
+        "triggerCondition": "monthly on analytics update",
+        "frequency": "monthly",
+        "deepLinkDestination": "AnalyticsScreen",
+        "relatedFeature": "analytics"
+      }
+    ]
+  }
+}
