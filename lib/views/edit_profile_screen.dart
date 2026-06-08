@@ -5,7 +5,7 @@ import 'dart:io';
 import '../viewmodels/profile_view_model.dart';
 import '../models/user_profile.dart';
 import '../theme/app_theme.dart';
-import 'camera_screen.dart';
+import 'package:image_picker/image_picker.dart';
 
 class EditProfileScreen extends StatefulWidget {
   const EditProfileScreen({super.key});
@@ -100,15 +100,43 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
             Center(
               child: GestureDetector(
                 onTap: () async {
-                  final path = await Navigator.push(
-                    context,
-                    MaterialPageRoute(builder: (_) => const CameraScreen()),
+                  final ImagePicker picker = ImagePicker();
+                  showModalBottomSheet(
+                    context: context,
+                    builder: (context) => SafeArea(
+                      child: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          ListTile(
+                            leading: const Icon(Icons.camera_alt_rounded),
+                            title: const Text('Take a photo'),
+                            onTap: () async {
+                              Navigator.pop(context);
+                              final XFile? photo = await picker.pickImage(source: ImageSource.camera);
+                              if (photo != null) {
+                                setState(() {
+                                  _avatarPath = photo.path;
+                                });
+                              }
+                            },
+                          ),
+                          ListTile(
+                            leading: const Icon(Icons.photo_library_rounded),
+                            title: const Text('Choose from gallery'),
+                            onTap: () async {
+                              Navigator.pop(context);
+                              final XFile? image = await picker.pickImage(source: ImageSource.gallery);
+                              if (image != null) {
+                                setState(() {
+                                  _avatarPath = image.path;
+                                });
+                              }
+                            },
+                          ),
+                        ],
+                      ),
+                    ),
                   );
-                  if (path != null) {
-                    setState(() {
-                      _avatarPath = path;
-                    });
-                  }
                 },
                 child: Stack(
                   children: [
