@@ -8,9 +8,16 @@ import 'viewmodels/analytics_view_model.dart';
 import 'views/preloader_screen.dart';
 import 'services/notification_service.dart';
 
+import 'package:flutter/services.dart';
+
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   
+  await SystemChrome.setPreferredOrientations([
+    DeviceOrientation.portraitUp,
+    DeviceOrientation.portraitDown,
+  ]);
+
   await NotificationService().init();
 
   runApp(

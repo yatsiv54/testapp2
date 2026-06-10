@@ -139,11 +139,19 @@ class _CreateEditSubscriptionScreenState extends State<CreateEditSubscriptionScr
                             title: const Text('Take a photo'),
                             onTap: () async {
                               Navigator.pop(context);
-                              final XFile? photo = await picker.pickImage(source: ImageSource.camera);
-                              if (photo != null) {
-                                setState(() {
-                                  _logoPath = photo.path;
-                                });
+                              try {
+                                final XFile? photo = await picker.pickImage(source: ImageSource.camera);
+                                if (photo != null) {
+                                  setState(() {
+                                    _logoPath = photo.path;
+                                  });
+                                }
+                              } catch (e) {
+                                if (context.mounted) {
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                    const SnackBar(content: Text('Camera access denied. Please enable in settings.')),
+                                  );
+                                }
                               }
                             },
                           ),
@@ -152,11 +160,19 @@ class _CreateEditSubscriptionScreenState extends State<CreateEditSubscriptionScr
                             title: const Text('Choose from gallery'),
                             onTap: () async {
                               Navigator.pop(context);
-                              final XFile? image = await picker.pickImage(source: ImageSource.gallery);
-                              if (image != null) {
-                                setState(() {
-                                  _logoPath = image.path;
-                                });
+                              try {
+                                final XFile? image = await picker.pickImage(source: ImageSource.gallery);
+                                if (image != null) {
+                                  setState(() {
+                                    _logoPath = image.path;
+                                  });
+                                }
+                              } catch (e) {
+                                if (context.mounted) {
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                    const SnackBar(content: Text('Gallery access denied. Please enable in settings.')),
+                                  );
+                                }
                               }
                             },
                           ),

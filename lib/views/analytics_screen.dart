@@ -106,10 +106,12 @@ class _AnalyticsScreenState extends State<AnalyticsScreen> {
       if (!context.mounted) return;
       Navigator.pop(context); // Close dialog
 
+      final box = context.findRenderObject() as RenderBox?;
       // ignore: deprecated_member_use
       await Share.shareXFiles(
         [XFile(path)],
         text: 'My Subscription Report ($_selectedInterval view)',
+        sharePositionOrigin: box != null ? box.localToGlobal(Offset.zero) & box.size : null,
       );
     } catch (e) {
       if (!context.mounted) return;

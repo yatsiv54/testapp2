@@ -64,8 +64,12 @@ class SettingsScreen extends StatelessWidget {
   }
 
   void _shareApp(BuildContext context) {
+    final box = context.findRenderObject() as RenderBox?;
     // ignore: deprecated_member_use
-    Share.share('Try this app! :) {APPSTORE_LINK}');
+    Share.share(
+      'Try this app! :) {APPSTORE_LINK}',
+      sharePositionOrigin: box != null ? box.localToGlobal(Offset.zero) & box.size : null,
+    );
   }
 
   @override
@@ -122,12 +126,23 @@ class SettingsScreen extends StatelessWidget {
                         } else {
                           if (!context.mounted) return;
                           final subVm = Provider.of<SubscriptionViewModel>(context, listen: false);
-                          for (var sub in subVm.subscriptions) {
-                            if (sub.hasReminder) {
-                              await notificationService.schedulePaymentReminder(sub);
+                          try {
+                            for (var sub in subVm.subscriptions) {
+                              if (sub.hasReminder) {
+                                await notificationService.schedulePaymentReminder(sub);
+                              }
+                            }
+                            await notificationService.scheduleOptimizationTip();
+                          } catch (e) {
+                            if (e.toString().contains('exact_alarms_not_permitted')) {
+                              if (context.mounted) {
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  const SnackBar(content: Text('Please allow exact alarms in settings')),
+                                );
+                              }
+                              await openAppSettings();
                             }
                           }
-                          await notificationService.scheduleOptimizationTip();
                         }
                       },
                     ),
