@@ -9,6 +9,8 @@ import 'views/preloader_screen.dart';
 import 'services/notification_service.dart';
 
 import 'package:flutter/services.dart';
+import 'package:flutter/foundation.dart';
+import 'package:device_preview/device_preview.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -21,14 +23,17 @@ void main() async {
   await NotificationService().init();
 
   runApp(
-    MultiProvider(
-      providers: [
-        ChangeNotifierProvider(create: (_) => SubscriptionViewModel()),
-        ChangeNotifierProvider(create: (_) => ProfileViewModel()),
-        ChangeNotifierProvider(create: (_) => SettingsViewModel()),
-        ChangeNotifierProvider(create: (_) => AnalyticsViewModel()),
-      ],
-      child: const LifeSubscriptionApp(),
+    DevicePreview(
+      enabled: !kReleaseMode,
+      builder: (context) => MultiProvider(
+        providers: [
+          ChangeNotifierProvider(create: (_) => SubscriptionViewModel()),
+          ChangeNotifierProvider(create: (_) => ProfileViewModel()),
+          ChangeNotifierProvider(create: (_) => SettingsViewModel()),
+          ChangeNotifierProvider(create: (_) => AnalyticsViewModel()),
+        ],
+        child: const LifeSubscriptionApp(),
+      ),
     ),
   );
 }
@@ -48,6 +53,8 @@ class LifeSubscriptionApp extends StatelessWidget {
         theme: AppTheme.lightTheme,
         darkTheme: AppTheme.darkTheme,
         themeMode: settingsVM.settings.isDarkMode ? ThemeMode.dark : ThemeMode.light,
+        builder: DevicePreview.appBuilder,
+        locale: DevicePreview.locale(context),
         home: const PreloaderScreen(),
         debugShowCheckedModeBanner: false,
       ),
