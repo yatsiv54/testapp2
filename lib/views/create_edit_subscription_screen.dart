@@ -6,6 +6,7 @@ import '../models/subscription.dart';
 import '../viewmodels/subscription_view_model.dart';
 import '../theme/app_theme.dart';
 import 'package:image_picker/image_picker.dart';
+import '../services/storage_service.dart';
 
 class CreateEditSubscriptionScreen extends StatefulWidget {
   final Subscription? existingSubscription;
@@ -142,8 +143,9 @@ class _CreateEditSubscriptionScreenState extends State<CreateEditSubscriptionScr
                               try {
                                 final XFile? photo = await picker.pickImage(source: ImageSource.camera);
                                 if (photo != null) {
+                                  final permanentPath = await StorageService().saveImagePermanently(photo.path);
                                   setState(() {
-                                    _logoPath = photo.path;
+                                    _logoPath = permanentPath;
                                   });
                                 }
                               } catch (e) {
@@ -163,8 +165,9 @@ class _CreateEditSubscriptionScreenState extends State<CreateEditSubscriptionScr
                               try {
                                 final XFile? image = await picker.pickImage(source: ImageSource.gallery);
                                 if (image != null) {
+                                  final permanentPath = await StorageService().saveImagePermanently(image.path);
                                   setState(() {
-                                    _logoPath = image.path;
+                                    _logoPath = permanentPath;
                                   });
                                 }
                               } catch (e) {

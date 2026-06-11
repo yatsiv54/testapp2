@@ -6,6 +6,7 @@ import '../viewmodels/profile_view_model.dart';
 import '../models/user_profile.dart';
 import '../theme/app_theme.dart';
 import 'package:image_picker/image_picker.dart';
+import '../services/storage_service.dart';
 
 class EditProfileScreen extends StatefulWidget {
   const EditProfileScreen({super.key});
@@ -115,8 +116,9 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                               try {
                                 final XFile? photo = await picker.pickImage(source: ImageSource.camera);
                                 if (photo != null) {
+                                  final permanentPath = await StorageService().saveImagePermanently(photo.path);
                                   setState(() {
-                                    _avatarPath = photo.path;
+                                    _avatarPath = permanentPath;
                                   });
                                 }
                               } catch (e) {
@@ -136,8 +138,9 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                               try {
                                 final XFile? image = await picker.pickImage(source: ImageSource.gallery);
                                 if (image != null) {
+                                  final permanentPath = await StorageService().saveImagePermanently(image.path);
                                   setState(() {
-                                    _avatarPath = image.path;
+                                    _avatarPath = permanentPath;
                                   });
                                 }
                               } catch (e) {

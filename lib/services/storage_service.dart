@@ -3,6 +3,8 @@ import '../models/subscription.dart';
 import '../models/user_profile.dart';
 import '../models/app_settings.dart';
 import 'dart:convert';
+import 'dart:io';
+import 'package:path_provider/path_provider.dart';
 
 class StorageService {
   static const String _subscriptionsKey = 'subscriptions_data';
@@ -51,5 +53,17 @@ class StorageService {
   Future<void> clearAll() async {
     final prefs = await SharedPreferences.getInstance();
     await prefs.clear();
+  }
+
+  Future<String> saveImagePermanently(String temporaryPath) async {
+    final File tempFile = File(temporaryPath);
+    if (!await tempFile.exists()) return temporaryPath;
+
+    final Directory appDocsDir = await getApplicationDocumentsDirectory();
+    final String fileName = DateTime.now().millisecondsSinceEpoch.toString() + '_' + tempFile.uri.pathSegments.last;
+    final String newPath = '${appDocsDir.path}/$fileName';
+
+    final File newFile = await tempFile.copy(newPath);
+    return newFile.path;
   }
 }
