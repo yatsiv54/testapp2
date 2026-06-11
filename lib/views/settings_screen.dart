@@ -87,7 +87,7 @@ class SettingsScreen extends StatelessWidget {
           
           return ListView(
             physics: const BouncingScrollPhysics(),
-            padding: const EdgeInsets.fromLTRB(16, 16, 16, 96), // 96 bottom padding to avoid overlapping floating navbar
+            padding: const EdgeInsets.fromLTRB(16, 16, 16, 140), // 140 bottom padding to avoid overlapping floating navbar
             children: [
               // System configuration card
               Container(

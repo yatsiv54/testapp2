@@ -394,8 +394,8 @@ class HomeScreen extends StatelessWidget {
                     20,
                     0,
                     20,
-                    96,
-                  ), // 96 bottom padding to avoid overlapping floating navbar
+                    140,
+                  ), // 140 bottom padding to avoid overlapping floating navbar
                   sliver: SliverList(
                     delegate: SliverChildBuilderDelegate((context, index) {
                       final sub = upcoming[index];

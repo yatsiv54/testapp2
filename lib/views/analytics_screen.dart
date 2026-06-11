@@ -478,7 +478,7 @@ class _AnalyticsScreenState extends State<AnalyticsScreen> {
                 ).animate().fadeIn(delay: 250.ms, duration: 450.ms),
 
                 const SizedBox(
-                  height: 96,
+                  height: 140,
                 ), // Space to avoid bottom navigation bar overlapping
               ],
             ),

@@ -103,7 +103,7 @@ class UserProfileScreen extends StatelessWidget {
 
           return SingleChildScrollView(
             physics: const BouncingScrollPhysics(),
-            padding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 16.0),
+            padding: const EdgeInsets.fromLTRB(20, 16, 20, 140),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [

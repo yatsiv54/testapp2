@@ -302,7 +302,7 @@ class _SubscriptionListScreenState extends State<SubscriptionListScreen> {
                         ),
                       )
                     : ListView.builder(
-                        padding: const EdgeInsets.fromLTRB(16, 0, 16, 96), // 96 bottom padding to avoid overlapping floating navbar
+                        padding: const EdgeInsets.fromLTRB(16, 0, 16, 140), // 140 bottom padding to avoid overlapping floating navbar
                         itemCount: processed.length,
                         itemBuilder: (context, index) {
                           final sub = processed[index];
